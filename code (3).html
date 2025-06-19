@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사상체질 테스트</title>
+    
+    <!-- SNS 공유 시 표시될 정보 (Open Graph 메타 태그) -->
+    <meta property="og:title" content="사상체질 테스트">
+    <meta property="og:description" content="나는 어떤 체질일까? 간단한 테스트로 나의 사상체질을 알아보세요!">
+    <meta property="og:image" content="https://i.imgur.com/vH9i34b.png"> <!-- 대표 이미지 URL (임의의 이미지로 설정) -->
+    <meta property="og:url" content="https://your-website-url.com"> <!-- 이 파일이 배포될 실제 URL을 입력하세요. -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- 카카오톡 공유 SDK -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js"
+        integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0PbtJEA4L0QHDqtGGIen" crossorigin="anonymous"></script>
+    <script>
+        // 중요! 카카오 개발자 사이트에서 발급받은 본인의 JavaScript 키를 입력하세요.
+        try {
+            Kakao.init('ee663753bccf998dc047f4bd93f564dc');
+        } catch(e) {
+            console.error("카카오 SDK 초기화 실패. JavaScript 키를 확인해주세요.", e);
+        }
+    </script>
+    
+    <style>
+        :root {
+            --primary-color: #005A8D;
+            --secondary-color: #007bff;
+            --light-bg-color: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-color: #343a40;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            
+            /* 체질별 색상 */
+            --color-taeyang: #E67E22;
+            --color-taeum: #27AE60;
+            --color-soyang: #C0392B;
+            --color-soum: #2980B9;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--light-bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .warning {
+            color: #e74c3c;
+            font-size: 0.9em;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: #fbeae8;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            transition: box-shadow 0.3s ease;
+        }
+        .question-block:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .question-block h3 {
+            margin-top: 0;
+            font-size: 1.15em;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .question-block .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media (min-width: 600px) {
+            .question-block .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .question-block input[type="radio"] {
+            display: none; /* 기본 라디오 버튼 숨기기 */
+        }
+
+        .question-block label {
+            display: block;
+            margin-bottom: 0;
+            cursor: pointer;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--light-bg-color);
+            transition: all 0.2s ease-in-out;
+            font-size: 0.95em;
+        }
+
+        .question-block label:hover {
+            border-color: var(--secondary-color);
+            background-color: #e9f3ff;
+        }
+        
+        .question-block input[type="radio"]:checked + label {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+        }
+
+        button#submitBtn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin: 40px auto 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button#submitBtn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        #result {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: #eef7ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        #result .summary-text { font-weight: 700; font-size: 1.3em; color: var(--primary-color); }
+        #result .score-details { font-size: 0.9em; margin: 15px 0; color: #555; }
+        #result .final-warning { font-size: 0.85em; font-style: italic; color: #777; margin-top: 20px; }
+        
+        #result-details {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .result-card {
+            flex: 1 1 350px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            text-align: left;
+            border-top: 5px solid;
+            transition: transform 0.3s ease;
+        }
+        .result-card:hover { transform: translateY(-5px); }
+        .result-card h2 { font-size: 1.8em; margin: 0 0 15px 0; display: flex; align-items: center; }
+        .result-card h2 span { font-size: 1.3em; margin-right: 10px; }
+        .result-card h4 { font-size: 1.1em; color: var(--primary-color); margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+        .result-card ul { list-style-type: '✓ '; padding-left: 20px; margin: 0; }
+        .result-card li { margin-bottom: 8px; }
+        .result-card .food-list { color: #333; }
+        .result-card .food-list .sub-text { font-size: 0.9em; color: #666; margin-top: 5px; list-style-type: none; padding-left: 5px; }
+        
+        /* 카드별 색상 */
+        #result-taeyang { border-color: var(--color-taeyang); } #result-taeyang h2 { color: var(--color-taeyang); }
+        #result-taeum { border-color: var(--color-taeum); } #result-taeum h2 { color: var(--color-taeum); }
+        #result-soyang { border-color: var(--color-soyang); } #result-soyang h2 { color: var(--color-soyang); }
+        #result-soum { border-color: var(--color-soum); } #result-soum h2 { color: var(--color-soum); }
+
+        /* 로딩 스피너 */
+        .loader { text-align: center; }
+        .spinner { border: 6px solid #f3f3f3; border-top: 6px solid var(--secondary-color); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 파일 업로드 */
+        #file-upload-block { text-align: center; }
+        #file-upload-block input[type="file"] { border: 1px dashed var(--border-color); padding: 10px; border-radius: 5px; cursor: pointer; }
+        #file-upload-block .warning { background: none; color: #888; font-size: 0.85em; padding: 0; margin-top: 10px; }
+
+        /* SNS 공유 버튼 */
+        #share-container { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        #share-container p { font-weight: 500; margin-bottom: 15px; font-size: 1em; }
+        .share-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .share-btn { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; color: white; font-size: 1.5em; transition: transform 0.2s ease; }
+        .share-btn:hover { transform: scale(1.1); }
+        #kakao-share-btn { background-color: #FEE500; color: #191919;}
+        #twitter-share-btn { background-color: #1DA1F2; }
+        #facebook-share-btn { background-color: #1877F2; }
+        #link-share-btn { background-color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>사상체질 간편 테스트</h1>
+        <p class="warning">※ 이 설문은 참고를 위한 간이 테스트이며, 정확한 체질 진단은 반드시 한의사와의 상담을 통해 받으셔야 합니다.</p>
+
+        <form id="sasangForm">
+            <div class="question-block">
+                <h3>1. 전반적인 체형은 어떤 편에 가깝습니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q1" value="태양인" id="q1a"><label for="q1a">(가) 상체가 발달하고 허리가 약한 편이다.</label>
+                    <input type="radio" name="q1" value="태음인" id="q1b"><label for="q1b">(나) 골격이 크고 허리와 복부가 발달한 편이다.</label>
+                    <input type="radio" name="q1" value="소양인" id="q1c"><label for="q1c">(다) 가슴 부위가 발달하고 엉덩이가 빈약한 편이다.</label>
+                    <input type="radio" name="q1" value="소음인" id="q1d"><label for="q1d">(라) 체구가 작고 아담하며, 엉덩이가 발달한 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>2. 평소 땀은 어느 정도로 흘립니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q2" value="태양인" id="q2a"><label for="q2a">(가) 건강할 때는 땀이 거의 없다가, 몸이 안 좋을 때 식은땀이 난다.</label>
+                    <input type="radio" name="q2" value="태음인" id="q2b"><label for="q2b">(나) 조금만 움직여도 땀을 많이 흘리는 편이며, 땀을 흘리면 개운하다.</label>
+                    <input type="radio" name="q2" value="소양인" id="q2c"><label for="q2c">(다) 평소 땀이 별로 없는 편이다.</label>
+                    <input type="radio" name="q2" value="소음인" id="q2d"><label for="q2d">(라) 땀을 거의 흘리지 않으며, 땀을 많이 흘리면 기운이 빠진다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>3. 추위와 더위 중 어떤 것을 더 힘들어합니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q3" value="태양인" id="q3a"><label for="q3a">(가) 더위도 추위도 크게 타지 않지만, 굳이 따지면 건조하고 더운 것을 싫어한다.</label>
+                    <input type="radio" name="q3" value="태음인" id="q3b"><label for="q3b">(나) 추위를 많이 타는 편이다.</label>
+                    <input type="radio" name="q3" value="소양인" id="q3c"><label for="q3c">(다) 더위를 많이 타고, 몸에 열이 많은 편이다.</label>
+                    <input type="radio" name="q3" value="소음인" id="q3d"><label for="q3d">(라) 추위를 매우 많이 타고, 손발이 찬 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>4. 목소리 톤이나 크기는 어떻습니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q4" value="태양인" id="q4a"><label for="q4a">(가) 카랑카랑하고 우렁찬 편이다.</label>
+                    <input type="radio" name="q4" value="태음인" id="q4b"><label for="q4b">(나) 차분하고 중후한 편이다.</label>
+                    <input type="radio" name="q4" value="소양인" id="q4c"><label for="q4c">(다) 날카롭고 명쾌하며, 말이 빠른 편이다.</label>
+                    <input type="radio" name="q4" value="소음인" id="q4d"><label for="q4d">(라) 조용하고 나긋나긋한 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>5. 걸음걸이는 어떤 편입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q5" value="태양인" id="q5a"><label for="q5a">(가) 기품 있고 당당하게 걷는다.</label>
+                    <input type="radio" name="q5" value="태음인" id="q5b"><label for="q5b">(나) 느긋하고 안정감 있게 걷는다.</label>
+                    <input type="radio" name="q5" value="소양인" id="q5c"><label for="q5c">(다) 빠르고 가볍게 걷는 편이다.</label>
+                    <input type="radio" name="q5" value="소음인" id="q5d"><label for="q5d">(라) 조심스럽고 얌전하게 걷는다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>6. 새로운 일을 시작할 때 어떤 편입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q6" value="태양인" id="q6a"><label for="q6a">(가) 과감하고 독창적으로 밀어붙인다.</label>
+                    <input type="radio" name="q6" value="태음인" id="q6b"><label for="q6b">(나) 신중하게 계획하고 꾸준히 추진한다.</label>
+                    <input type="radio" name="q6" value="소양인" id="q6c"><label for="q6c">(다) 아이디어가 많고 즉흥적으로 시작하지만, 마무리가 약할 때가 있다.</label>
+                    <input type="radio" name="q6" value="소음인" id="q6d"><label for="q6d">(라) 꼼꼼하게 분석하고 계획하지만, 시작을 망설이는 경향이 있다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>7. 대인관계에서 주로 어떤 역할을 합니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q7" value="태양인" id="q7a"><label for="q7a">(가) 주도적이고 사람들을 이끄는 편이다.</label>
+                    <input type="radio" name="q7" value="태음인" id="q7b"><label for="q7b">(나) 사람들과 잘 어울리고 포용력이 좋은 편이다.</label>
+                    <input type="radio" name="q7" value="소양인" id="q7c"><label for="q7c">(다) 분위기를 주도하고 사교적이지만, 깊은 관계는 어려워한다.</label>
+                    <input type="radio" name="q7" value="소음인" id="q7d"><label for="q7d">(라) 소수의 사람들과 깊게 사귀며, 먼저 다가가지 않는 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>8. 스트레스를 받을 때 주로 어떻게 반응합니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q8" value="태양인" id="q8a"><label for="q8a">(가) 크게 분노하거나 좌절한다.</label>
+                    <input type="radio" name="q8" value="태음인" id="q8b"><label for="q8b">(나) 속으로 삭이거나, 먹는 것으로 풀려고 한다.</label>
+                    <input type="radio" name="q8" value="소양인" id="q8c"><label for="q8c">(다) 쉽게 짜증내거나 화를 내고, 금방 잊어버린다.</label>
+                    <input type="radio" name="q8" value="소음인" id="q8d"><label for="q8d">(라) 불안해하고 초조해하며, 혼자만의 시간을 갖는다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>9. 평소 감정 표현은 어떤 편입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q9" value="태양인" id="q9a"><label for="q9a">(가) 감정 표현이 직선적이고 분명하다.</label>
+                    <input type="radio" name="q9" value="태음인" id="q9b"><label for="q9b">(나) 감정을 잘 드러내지 않고 속으로 참는 편이다.</label>
+                    <input type="radio" name="q9" value="소양인" id="q9c"><label for="q9c">(다) 감정 기복이 있고, 표현이 활발한 편이다.</label>
+                    <input type="radio" name="q9" value="소음인" id="q9d"><label for="q9d">(라) 감정을 잘 표현하지 않고, 내성적인 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>10. 꼼꼼함과 관련하여 자신은 어떤 편입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q10" value="태양인" id="q10a"><label for="q10a">(가) 큰 그림을 보고 추진하는 편이며, 세부적인 것은 놓칠 때가 있다.</label>
+                    <input type="radio" name="q10" value="태음인" id="q10b"><label for="q10b">(나) 맡은 일은 끈기 있게 하지만, 변화에는 둔감한 편이다.</label>
+                    <input type="radio" name="q10" value="소양인" id="q10c"><label for="q10c">(다) 민첩하고 재치가 있지만, 꼼꼼함이 부족할 때가 있다.</label>
+                    <input type="radio" name="q10" value="소음인" id="q10d"><label for="q10d">(라) 매우 꼼꼼하고 세심하지만, 때로는 지나치게 작은 것에 얽매인다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>11. 평소 소화력은 어떻습니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q11" value="태양인" id="q11a"><label for="q11a">(가) 소화에는 큰 문제가 없으나, 기름진 음식은 부담스러울 수 있다.</label>
+                    <input type="radio" name="q11" value="태음인" id="q11b"><label for="q11b">(나) 소화력이 좋고 식욕이 왕성한 편이다.</label>
+                    <input type="radio" name="q11" value="소양인" id="q11c"><label for="q11c">(다) 소화는 잘 되는 편이나, 급하게 먹거나 스트레스 받으면 체하기 쉽다.</label>
+                    <input type="radio" name="q11" value="소음인" id="q11d"><label for="q11d">(라) 소화기관이 약하고 예민하여, 조금만 과식해도 불편하다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>12. 어떤 종류의 음식을 먹었을 때 속이 편안합니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q12" value="태양인" id="q12a"><label for="q12a">(가) 담백하고 시원한 해산물이나 채소류.</label>
+                    <input type="radio" name="q12" value="태음인" id="q12b"><label for="q12b">(나) 따뜻한 성질의 육류나 뿌리채소.</label>
+                    <input type="radio" name="q12" value="소양인" id="q12c"><label for="q12c">(다) 시원하고 신선한 과일이나 채소, 해산물.</label>
+                    <input type="radio" name="q12" value="소음인" id="q12d"><label for="q12d">(라) 따뜻하고 소화가 잘 되는 음식, 자극적이지 않은 음식.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>13. 식사량은 보통 어느 정도입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q13" value="태양인" id="q13a"><label for="q13a">(가) 많이 먹지 않아도 활동에 지장이 없다.</label>
+                    <input type="radio" name="q13" value="태음인" id="q13b"><label for="q13b">(나) 식욕이 좋고 많이 먹는 편이다.</label>
+                    <input type="radio" name="q13" value="소양인" id="q13c"><label for="q13c">(다) 식욕은 좋으나, 많이 먹지는 못한다.</label>
+                    <input type="radio" name="q13" value="소음인" id="q13d"><label for="q13d">(라) 소식하는 편이며, 식욕이 별로 없을 때가 많다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>14. 배변 습관은 어떻습니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q14" value="태양인" id="q14a"><label for="q14a">(가) 평소 무난하나, 몸이 안 좋으면 변이 묽어질 수 있다.</label>
+                    <input type="radio" name="q14" value="태음인" id="q14b"><label for="q14b">(나) 변이 무르고 양이 많은 편이며, 규칙적인 편이다.</label>
+                    <input type="radio" name="q14" value="소양인" id="q14c"><label for="q14c">(다) 열이 많을 때 변비가 생기기 쉽다.</label>
+                    <input type="radio" name="q14" value="소음인" id="q14d"><label for="q14d">(라) 배가 차면 설사를 하거나 변이 묽어지기 쉽다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>15. 음식을 먹는 속도는 어떤 편입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q15" value="태양인" id="q15a"><label for="q15a">(가) 보통 속도로 먹는다.</label>
+                    <input type="radio" name="q15" value="태음인" id="q15b"><label for="q15b">(나) 느긋하게 먹는 편이다.</label>
+                    <input type="radio" name="q15" value="소양인" id="q15c"><label for="q15c">(다) 급하게 먹는 편이다.</label>
+                    <input type="radio" name="q15" value="소음인" id="q15d"><label for="q15d">(라) 천천히 먹는 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>16. 몸이 안 좋을 때 주로 어떤 증상이 나타납니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q16" value="태양인" id="q16a"><label for="q16a">(가) 구토나 다리 힘 빠짐, 소변 문제.</label>
+                    <input type="radio" name="q16" value="태음인" id="q16b"><label for="q16b">(나) 감기, 기관지염, 고혈압 등 순환기계 질환.</label>
+                    <input type="radio" name="q16" value="소양인" id="q16c"><label for="q16c">(다) 두통, 눈 충혈, 변비, 요통 등 상부 열감 관련 증상.</label>
+                    <input type="radio" name="q16" value="소음인" id="q16d"><label for="q16d">(라) 소화불량, 설사, 수족냉증 등 소화기 및 냉증 관련 증상.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>17. 잠은 잘 자는 편입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q17" value="태양인" id="q17a"><label for="q17a">(가) 깊게 자지 못하고 예민한 편이다.</label>
+                    <input type="radio" name="q17" value="태음인" id="q17b"><label for="q17b">(나) 잠이 많은 편이고, 잘 자는 편이다.</label>
+                    <input type="radio" name="q17" value="소양인" id="q17c"><label for="q17c">(다) 생각이 많아 잠들기 어렵거나, 꿈을 많이 꾸는 편이다.</label>
+                    <input type="radio" name="q17" value="소음인" id="q17d"><label for="q17d">(라) 잠이 부족하면 매우 피곤하고, 예민해서 잘 깨는 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>18. 평소 기력은 어떤 편입니까?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q18" value="태양인" id="q18a"><label for="q18a">(가) 활동적이고 적극적이나, 지구력은 약한 편이다.</label>
+                    <input type="radio" name="q18" value="태음인" id="q18b"><label for="q18b">(나) 지구력이 좋고 꾸준하지만, 시작이 느린 편이다.</label>
+                    <input type="radio" name="q18" value="소양인" id="q18c"><label for="q18c">(다) 순발력이 좋고 활기차지만, 쉽게 지치는 경향이 있다.</label>
+                    <input type="radio" name="q18" value="소음인" id="q18d"><label for="q18d">(라) 체력이 약하고 쉽게 지치며, 회복이 느린 편이다.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>19. 본인이 생각하기에 가장 약한 신체 부위나 기능은?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q19" value="태양인" id="q19a"><label for="q19a">(가) 허리, 하체.</label>
+                    <input type="radio" name="q19" value="태음인" id="q19b"><label for="q19b">(나) 폐, 기관지, 피부.</label>
+                    <input type="radio" name="q19" value="소양인" id="q19c"><label for="q19c">(다) 신장, 방광, 허리.</label>
+                    <input type="radio" name="q19" value="소음인" id="q19d"><label for="q19d">(라) 위장, 소화기관.</label>
+                </div>
+            </div>
+            <div class="question-block">
+                <h3>20. 건강을 위해 특별히 신경 쓰는 부분이 있다면?</h3>
+                <div class="options-grid">
+                    <input type="radio" name="q20" value="태양인" id="q20a"><label for="q20a">(가) 마음을 안정시키고 과도한 분노를 피하려 한다.</label>
+                    <input type="radio" name="q20" value="태음인" id="q20b"><label for="q20b">(나) 규칙적인 운동으로 땀을 내고, 과식을 피하려 한다.</label>
+                    <input type="radio" name="q20" value="소양인" id="q20c"><label for="q20c">(다) 스트레스를 바로 풀고, 시원한 환경을 유지하려 한다.</label>
+                    <input type="radio" name="q20" value="소음인" id="q20d"><label for="q20d">(라) 몸을 따뜻하게 하고, 소화 잘되는 음식을 챙겨 먹으려 한다.</label>
+                </div>
+            </div>
+            
+            <div class="question-block" id="file-upload-block">
+                <h3>체형 사진 업로드 (선택 사항)</h3>
+                <input type="file" id="bodyPhotoUpload" accept="image/*">
+                <p class="warning">사진을 첨부하시면 더 정확한 분석에 도움이 될 수 있습니다. (현재 기능 구현 안됨)</p>
+            </div>
+
+            <button type="button" id="submitBtn" onclick="calculateResult()">결과 분석하기</button>
+        </form>
+
+        <div id="result" style="display: none;">
+            <!-- 결과 요약 및 공유 버튼이 여기에 동적으로 표시됩니다 -->
+        </div>
+        
+        <div id="result-details">
+            <!-- 결과 카드는 여기에 동적으로 표시됩니다 -->
+        </div>
+
+        <!-- 결과 카드 템플릿 (숨겨진 상태) -->
+        <div id="result-taeyang" class="result-card" style="display:none;">
+            <h2><span>🌞</span>태양인 (리더형 / 에너지 과잉형)</h2>
+            <h4>특징</h4> <ul><li>상체 발달, 활동적, 자존감 높음, 간 기능 왕성</li></ul>
+            <h4>추천 음식</h4> <ul class="food-list"><li>보리밥, 도토리묵, 수박, 배, 미역, 우엉</li><li class="sub-text">담백하고 차가운 성질의 음식</li></ul>
+            <h4>피해야 할 음식</h4> <ul class="food-list"><li>돼지고기, 치즈, 튀김류, 밀가루, 기름진 음식</li></ul>
+            <h4>건강 습관</h4> <ul><li>과격한 운동보다는 유산소 중심</li><li>식욕 절제 및 과식 주의</li><li>스트레스 조절 중요</li></ul>
+        </div>
+        <div id="result-taeum" class="result-card" style="display:none;">
+            <h2><span>🌳</span>태음인 (안정형 / 체력우세형)</h2>
+            <h4>특징</h4> <ul><li>하체 발달, 체격 큼, 느긋함, 폐 기능 약함</li></ul>
+            <h4>추천 음식</h4> <ul class="food-list"><li>녹두, 율무, 도라지, 무, 생강차, 나물류</li><li class="sub-text">소화 돕는 따뜻한 음식 위주</li></ul>
+            <h4>피해야 할 음식</h4> <ul class="food-list"><li>기름진 음식, 고지방 육류, 밀가루</li></ul>
+            <h4>건강 습관</h4> <ul><li>규칙적인 운동 (등산, 걷기 등)</li><li>땀 배출을 통한 노폐물 제거</li><li>과음 및 과식 주의</li></ul>
+        </div>
+        <div id="result-soyang" class="result-card" style="display:none;">
+            <h2><span>🔥</span>소양인 (외향형 / 추진력 있는 스타일)</h2>
+            <h4>특징</h4> <ul><li>상체 발달, 열 많음, 급한 성격, 비위 기능 강함</li></ul>
+            <h4>추천 음식</h4> <ul class="food-list"><li>오이, 배추, 메밀, 가지, 연근, 국수</li><li class="sub-text">시원하고 담백한 음식</li></ul>
+            <h4>피해야 할 음식</h4> <ul class="food-list"><li>닭고기, 술, 커피, 인삼, 삼계탕</li></ul>
+            <h4>건강 습관</h4> <ul><li>무리한 일이나 과로 피하기</li><li>과도한 카페인, 열성 식품 자제</li><li>감정 기복 관리 필요</li></ul>
+        </div>
+        <div id="result-soum" class="result-card" style="display:none;">
+            <h2><span>❄️</span>소음인 (내향형 / 섬세하고 민감한 스타일)</h2>
+            <h4>특징</h4> <ul><li>소화기 약함, 추위 탐, 예민함, 신경성 질환 많음</li></ul>
+            <h4>추천 음식</h4> <ul class="food-list"><li>생강, 마늘, 대추, 양배추, 찹쌀죽, 곰탕</li><li class="sub-text">따뜻하고 부드러운 음식</li></ul>
+            <h4>피해야 할 음식</h4> <ul class="food-list"><li>아이스크림, 찬 음식, 날 음식, 커피</li></ul>
+            <h4>건강 습관</h4> <ul><li>소화 잘되는 식사, 규칙적인 수면</li><li>차가운 환경 피하고 따뜻하게 유지</li><li>지나친 걱정이나 불안 줄이기</li></ul>
+        </div>
+    </div>
+
+    <script>
+        const TOTAL_QUESTIONS = 20;
+        let userResultType = ''; // 공유를 위한 결과 저장 변수
+
+        // 공유 기능 함수들
+        function shareToKakao() {
+            if (!userResultType) return;
+            
+            const resultInfo = {
+                '태양인': { emoji: '🌞', desc: '리더형 / 에너지 과잉형' },
+                '태음인': { emoji: '🌳', desc: '안정형 / 체력우세형' },
+                '소양인': { emoji: '🔥', desc: '외향형 / 추진력 있는 스타일' },
+                '소음인': { emoji: '❄️', desc: '내향형 / 섬세하고 민감한 스타일' },
+            };
+            const myResult = resultInfo[userResultType];
+
+            Kakao.Share.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: `사상체질 테스트 결과: 나는 ${myResult.emoji}${userResultType}!`,
+                    description: `당신은 어떤 체질일까요? 지금 바로 테스트 해보세요!`,
+                    imageUrl: document.querySelector('meta[property="og:image"]').content, // OG 이미지 사용
+                    link: {
+                        mobileWebUrl: window.location.href,
+                        webUrl: window.location.href,
+                    },
+                },
+                buttons: [
+                    {
+                        title: '내 체질 테스트하기',
+                        link: {
+                            mobileWebUrl: window.location.href,
+                            webUrl: window.location.href,
+                        },
+                    },
+                ],
+            });
+        }
+        
+        function shareToTwitter() {
+            if (!userResultType) return;
+            const text = encodeURIComponent(`사상체질 테스트 결과, 저는 ${userResultType}이 나왔어요! 😲 당신의 체질은 무엇일까요? #사상체질 #체질테스트`);
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`);
+        }
+
+        function shareToFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('링크가 클립보드에 복사되었습니다!');
+            }).catch(err => {
+                console.error('링크 복사 실패:', err);
+                alert('링크 복사에 실패했습니다.');
+            });
+        }
+
+        function calculateResult() {
+            const form = document.getElementById('sasangForm');
+            const resultDiv = document.getElementById('result');
+            const resultDetailsDiv = document.getElementById('result-details');
+            
+            resultDiv.style.display = 'none';
+            resultDetailsDiv.innerHTML = ''; 
+            
+            let answeredCount = 0;
+            const scores = { '태양인': 0, '태음인': 0, '소양인': 0, '소음인': 0 };
+
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const selectedOption = form.elements['q' + i];
+                if (selectedOption && selectedOption.value) {
+                    scores[selectedOption.value]++;
+                    answeredCount++;
+                }
+            }
+
+            if (answeredCount < TOTAL_QUESTIONS) {
+                alert('모든 문항에 답변해주세요.');
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                <div class="loader">
+                    <p>결과를 분석 중입니다... 잠시만 기다려주세요.</p>
+                    <div class="spinner"></div>
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+
+            setTimeout(() => {
+                let maxScore = 0;
+                let resultTypes = [];
+                for (const type in scores) {
+                    if (scores[type] > maxScore) {
+                        maxScore = scores[type];
+                        resultTypes = [type];
+                    } else if (scores[type] === maxScore) {
+                        resultTypes.push(type);
+                    }
+                }
+
+                userResultType = resultTypes[0]; // 공유를 위해 첫 번째 결과를 저장
+                
+                let summaryText = "당신의 예상 체질은 ";
+                if (resultTypes.length > 1) {
+                    summaryText += `<strong>${resultTypes.join(', ')}</strong>의 특성이 복합적으로 나타납니다.`;
+                } else if (resultTypes.length === 1) {
+                    summaryText += `<strong>${resultTypes[0]}</strong> 입니다.`;
+                } else {
+                    summaryText = "결과를 판별할 수 없습니다. 다시 시도해주세요.";
+                    userResultType = ''; // 결과 없으면 초기화
+                }
+
+                const scoreDetails = `
+                    태양인: ${scores['태양인']}점 | 
+                    태음인: ${scores['태음인']}점 | 
+                    소양인: ${scores['소양인']}점 | 
+                    소음인: ${scores['소음인']}점
+                `;
+                
+                // 공유 버튼 HTML
+                const shareButtonsHTML = `
+                    <div id="share-container">
+                        <p>결과를 친구에게 공유해보세요!</p>
+                        <div class="share-buttons">
+                            <button id="kakao-share-btn" class="share-btn" onclick="shareToKakao()">💬</button>
+                            <button id="twitter-share-btn" class="share-btn" onclick="shareToTwitter()">𝕏</button>
+                            <button id="facebook-share-btn" class="share-btn" onclick="shareToFacebook()">ⓕ</button>
+                            <button id="link-share-btn" class="share-btn" onclick="copyLink()">🔗</button>
+                        </div>
+                    </div>
+                `;
+
+                resultDiv.innerHTML = `
+                    <p class="summary-text">${summaryText}</p>
+                    <p class="score-details">${scoreDetails}</p>
+                    ${userResultType ? shareButtonsHTML : ''}
+                    <p class="final-warning">이 결과는 간이 테스트이므로 참고용으로만 사용해주세요.</p>
+                `;
+
+                resultTypes.forEach(type => {
+                    const typeToId = { '태양인': 'taeyang', '태음인': 'taeum', '소양인': 'soyang', '소음인': 'soum' };
+                    const cardId = 'result-' + typeToId[type];
+                    if (cardId) {
+                        const cardTemplate = document.getElementById(cardId);
+                        const cardClone = cardTemplate.cloneNode(true);
+                        cardClone.style.display = 'block';
+                        resultDetailsDiv.appendChild(cardClone);
+                    }
+                });
+                
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
